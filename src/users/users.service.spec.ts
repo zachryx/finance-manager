@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { UsersService } from "./users.service";
-import { PrismaService } from "nestjs-prisma";
+import { PrismaService } from "../common/services/prisma/prisma.service";
 import { userCreateInput, userMock } from "./__mock__/user.mock";
 import { faker } from "@faker-js/faker";
 

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { CreateExpenseInput } from "./dto/create-expense.input";
-import { PrismaService } from "nestjs-prisma";
+import { PrismaService } from "../common/services/prisma/prisma.service";
 import { Prisma } from "@prisma/client";
 import { FindExpensesInput } from "./dto/find-expenses.input";
 

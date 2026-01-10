@@ -1,5 +1,10 @@
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, ObjectType, registerEnumType } from "@nestjs/graphql";
 import { Range } from "@prisma/client";
+
+registerEnumType(Range, {
+  name: "Range",
+  description: "Budget range type",
+});
 
 @ObjectType()
 export class Budget {
@@ -21,4 +26,3 @@ export class Budget {
   @Field(() => Date)
   endTime: Date;
 }
-

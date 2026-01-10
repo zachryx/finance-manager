@@ -12,16 +12,33 @@ type Account {
   userId: String!
 }
 
+type Budget {
+  amount: Int!
+  endTime: DateTime!
+  id: String!
+  name: String!
+  startTime: DateTime!
+  type: Range!
+}
+
 input CreateAccountInput {
   balance: Float!
   currency: String!
   name: String!
 }
 
+input CreateBudgetInput {
+  amount: Int!
+  endTime: DateTime!
+  name: String!
+  startTime: DateTime!
+  type: Range!
+}
+
 input CreateExpenseInput {
   accountId: String!
   amount: Float!
-  category: String!
+  category: ExpenseCategory!
   description: String
 }
 
@@ -40,7 +57,7 @@ scalar DateTime
 
 type Expense {
   amount: Float!
-  category: String!
+  category: ExpenseCategory!
   created_at: DateTime!
   description: String
   id: String!
@@ -48,9 +65,19 @@ type Expense {
   userId: String!
 }
 
+"""Expense category type"""
+enum ExpenseCategory {
+  Food
+  Gift
+  Health
+  Rent
+  Subscription
+  Transportation
+}
+
 input FindExpensesInput {
   accountId: String
-  category: String!
+  category: ExpenseCategory!
   limit: Int! = 10
   page: Int! = 1
 }
@@ -107,12 +134,15 @@ type MessageResponse {
 
 type Mutation {
   createAccount(createAccountInput: CreateAccountInput!): Account!
+  createBudget(createBudgeInput: CreateBudgetInput!): Budget!
   createExpense(createExpenseInput: CreateExpenseInput!): Expense!
   createIncome(createIncomeInput: CreateIncomeInput!): Income!
   deleteAccount(id: String!): Boolean!
+  deleteBudget(id: String!): Boolean!
   login(loginInput: LoginInput!): LoginResponse!
   register(registerInput: RegisterInput!): User!
   updateAccount(updateAccountInput: UpdateAccountInput!): Account!
+  updateBudget(updateBudgetInput: UpdateBudgetInput!): Budget!
 }
 
 type Query {
@@ -124,6 +154,15 @@ type Query {
   findUserExpenses(findExpensesInput: FindExpensesInput!): FindExpensesResponse!
   forgotPassword(forgotPassword: ForgotPassword!): MessageResponse!
   resetPassword(resetPasswordInput: ResetPasswordInput!): MessageResponse!
+}
+
+"""Budget range type"""
+enum Range {
+  Daily
+  Monthly
+  Quarterly
+  Weekly
+  Yearly
 }
 
 input RegisterInput {
@@ -147,6 +186,14 @@ input UpdateAccountInput {
   accountId: String!
   balance: Float!
   name: String
+}
+
+input UpdateBudgetInput {
+  amount: Int
+  budgetId: String!
+  endTime: DateTime
+  name: String
+  startTime: DateTime
 }
 
 type User {

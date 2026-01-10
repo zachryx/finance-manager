@@ -1,4 +1,10 @@
-import { ObjectType, Field, Int, Float } from "@nestjs/graphql";
+import { ObjectType, Field, Int, Float, registerEnumType } from "@nestjs/graphql";
+import { ExpenseCategory } from "@prisma/client";
+
+registerEnumType(ExpenseCategory, {
+  name: "ExpenseCategory",
+  description: "Expense category type",
+});
 
 @ObjectType()
 export class Expense {
@@ -11,8 +17,8 @@ export class Expense {
   @Field(() => Float)
   amount: number;
 
-  @Field(() => String)
-  category: string;
+  @Field(() => ExpenseCategory)
+  category: ExpenseCategory;
 
   @Field(() => String)
   userId: string;

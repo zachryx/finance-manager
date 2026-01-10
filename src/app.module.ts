@@ -1,18 +1,18 @@
+import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
+import { CacheModule } from "@nestjs/cache-manager";
 import { Logger, Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import { CacheModule } from "@nestjs/cache-manager";
-import { AuthModule } from "./auth/auth.module";
 import { GraphQLModule } from "@nestjs/graphql";
-import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
-import { PrismaModule, loggingMiddleware } from "nestjs-prisma";
-import config from "./common/configs/config";
-import { GqlConfigService } from "./gql.config.service";
-import { UsersModule } from "./users/users.module";
-import { TransactionsModule } from "./transactions/transactions.module";
-import { BudgetsModule } from "./budgets/budgets.module";
 import { AccountsModule } from "./accounts/accounts.module";
-import { IncomeModule } from './income/income.module';
-import { ExpensesModule } from './expenses/expenses.module';
+import { AuthModule } from "./auth/auth.module";
+import { BudgetsModule } from "./budgets/budgets.module";
+import config from "./common/configs/config";
+import { PrismaModule } from "./common/services/prisma/prisma.module";
+import { ExpensesModule } from "./expenses/expenses.module";
+import { GqlConfigService } from "./gql.config.service";
+import { IncomeModule } from "./income/income.module";
+import { TransactionsModule } from "./transactions/transactions.module";
+import { UsersModule } from "./users/users.module";
 
 @Module({
   imports: [
@@ -27,17 +27,7 @@ import { ExpensesModule } from './expenses/expenses.module';
       imports: [ConfigModule],
       useClass: GqlConfigService,
     }),
-    PrismaModule.forRoot({
-      isGlobal: true,
-      prismaServiceOptions: {
-        middlewares: [
-          loggingMiddleware({
-            logger: new Logger("PrismaMiddleware"),
-            logLevel: "log",
-          }),
-        ],
-      },
-    }),
+    PrismaModule,
     AuthModule,
     UsersModule,
     TransactionsModule,
@@ -49,4 +39,4 @@ import { ExpensesModule } from './expenses/expenses.module';
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}

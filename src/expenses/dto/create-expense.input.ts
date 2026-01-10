@@ -6,7 +6,7 @@ export class CreateExpenseInput {
   @Field(() => String, { nullable: true })
   description: string;
 
-  @Field(() => String)
+  @Field(() => ExpenseCategory)
   category: ExpenseCategory;
 
   @Field(() => Float)

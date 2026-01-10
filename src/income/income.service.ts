@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { CreateIncomeInput } from "./inputs/create-income.input";
-import { PrismaService } from "nestjs-prisma";
+import { PrismaService } from "../common/services/prisma/prisma.service";
 import { FindIncomesInput } from "./inputs/find-incomes.input";
 
 @Injectable()

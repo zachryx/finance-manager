@@ -1,5 +1,10 @@
-import { Field, InputType, Int } from "@nestjs/graphql";
+import { Field, InputType, Int, registerEnumType } from "@nestjs/graphql";
 import { ExpenseCategory } from "@prisma/client";
+
+registerEnumType(ExpenseCategory, {
+  name: "ExpenseCategory",
+  description: "Expense category type",
+});
 
 @InputType()
 export class FindExpensesInput {
@@ -12,6 +17,6 @@ export class FindExpensesInput {
   @Field(() => String, { nullable: true })
   accountId: string;
 
-  @Field(() => String)
+  @Field(() => ExpenseCategory)
   category: ExpenseCategory;
 }
