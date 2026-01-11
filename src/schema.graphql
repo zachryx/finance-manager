@@ -75,6 +75,19 @@ enum ExpenseCategory {
   Transportation
 }
 
+input FindBudgetsInput {
+  limit: Int! = 10
+  page: Int! = 1
+  search: String
+}
+
+type FindBudgetsResponse {
+  data: [Budget!]!
+  limit: Int!
+  page: Int!
+  totalCount: Int!
+}
+
 input FindExpensesInput {
   accountId: String
   category: ExpenseCategory!
@@ -153,6 +166,8 @@ type Query {
   findUserAccounts: [Account!]!
   findUserExpenses(findExpensesInput: FindExpensesInput!): FindExpensesResponse!
   forgotPassword(forgotPassword: ForgotPassword!): MessageResponse!
+  getUserBudget(id: String!): Budget!
+  getUserBudgets(findBudgetsInput: FindBudgetsInput!): FindBudgetsResponse!
   resetPassword(resetPasswordInput: ResetPasswordInput!): MessageResponse!
 }
 

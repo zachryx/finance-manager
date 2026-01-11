@@ -1,32 +1,140 @@
-import { Injectable } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from "@nestjs/common";
 import { PrismaService } from "../common/services/prisma/prisma.service";
+import { CreateBudgetInput } from "./inputs/create-budget.input";
 import { UpdateBudgetInput } from "./inputs/update-budget.input";
+import { FindBudgetsInput } from "./inputs/find-budgets.input";
+import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class BudgetsService {
-  constructor(private readonly prismaServie: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
-  async findByName(name: string, userId: string) {
-    return this.prismaServie.budget.findFirst({ where: { name, userId } });
+  async handleCreateBudget(userId: string, data: CreateBudgetInput) {
+    try {
+      const budgetExists = await this.prismaService.budget.findFirst({
+        where: {
+          name: data.name,
+          userId,
+        },
+      });
+
+      if (budgetExists) {
+        throw new InternalServerErrorException(
+          "Budget with the same name already exists"
+        );
+      }
+
+      const budget = await this.prismaService.budget.create({
+        data: {
+          ...data,
+          userId,
+        },
+      });
+
+      return budget;
+    } catch (error) {
+      throw new InternalServerErrorException("Failed to create budget");
+    }
   }
 
-  async findById(id: string, userId: string) {
-    return this.prismaServie.budget.findFirst({ where: { id, userId } });
+  async handleGetBudget(id: string, userId: string) {
+    try {
+      const budget = await this.prismaService.budget.findFirst({
+        where: { id, userId },
+      });
+      if (!budget) {
+        throw new NotFoundException("Budget not found");
+      }
+
+      return budget;
+    } catch (error) {
+      throw new InternalServerErrorException("Failed to retrieve budget");
+    }
   }
 
-  async createBudget(data: Prisma.BudgetUncheckedCreateInput) {
-    return this.prismaServie.budget.create({ data });
+  async handleGetBudgets(userId: string, query: FindBudgetsInput) {
+    try {
+      const { page, limit, ...filters } = query;
+
+      const whereClause: Prisma.BudgetWhereInput = { userId };
+
+      if (filters.search) {
+        whereClause.name = { contains: filters.search, mode: "insensitive" };
+      }
+
+      const skip = (page - 1) * limit;
+      const take = limit;
+      const [budgets, totalCount] = await Promise.all([
+        this.prismaService.budget.findMany({
+          where: whereClause,
+          skip,
+          take,
+          orderBy: {
+            created_at: "desc",
+          },
+        }),
+        this.prismaService.budget.count({
+          where: whereClause,
+        }),
+      ]);
+
+      return {
+        data: budgets,
+        page,
+        limit,
+        totalCount,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException("Failed to retrieve budgets");
+    }
   }
 
-  async deleteBudget(id: string) {
-    return this.prismaServie.budget.delete({ where: { id } });
+  async handleDeleteBudget(id: string, userId: string) {
+    try {
+      const budget = await this.prismaService.budget.findFirst({
+        where: { id, userId },
+      });
+
+      if (!budget) {
+        throw new NotFoundException("Budget not found");
+      }
+
+      const deletedBudget = await this.prismaService.budget.delete({
+        where: { id },
+      });
+
+      return !!deletedBudget;
+    } catch (error) {
+      throw new InternalServerErrorException("Failed to delete budget");
+    }
   }
 
-  async updateBudget(id: string, data: Omit<UpdateBudgetInput, "budgetId">) {
-    return this.prismaServie.budget.update({
-      where: { id },
-      data,
-    });
+  async handleUpdateBudget(
+    id: string,
+    userId: string,
+    data: Omit<UpdateBudgetInput, "budgetId">
+  ) {
+    try {
+      const budget = await this.prismaService.budget.findFirst({
+        where: { id, userId },
+      });
+
+      if (!budget) {
+        throw new NotFoundException("Budget not found");
+      }
+
+      const updatedBudget = await this.prismaService.budget.update({
+        where: { id },
+        data,
+      });
+
+      return updatedBudget;
+    } catch (error) {
+      throw new InternalServerErrorException("Failed to update budget");
+    }
   }
 }

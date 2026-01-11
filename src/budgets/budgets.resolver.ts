@@ -1,47 +1,42 @@
-import { Args, Resolver, Mutation } from "@nestjs/graphql";
-import { BudgetsService } from "./budgets.service";
-import {
-  BadRequestException,
-  InternalServerErrorException,
-  NotFoundException,
-  UseGuards,
-} from "@nestjs/common";
+import { UseGuards } from "@nestjs/common";
+import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { GqlAuthGuard } from "../auth/gql.-auth.guard";
-import { User } from "../users/entities/user.entity";
 import { CurrentUser } from "../common/decorators/current-user";
+import { User } from "../users/entities/user.entity";
+import { BudgetsService } from "./budgets.service";
 import { Budget } from "./entities/budget.entity";
 import { CreateBudgetInput } from "./inputs/create-budget.input";
+import { FindBudgetsInput } from "./inputs/find-budgets.input";
 import { UpdateBudgetInput } from "./inputs/update-budget.input";
+import { FindBudgetsResponse } from "./responses/find-budgets.response";
 
 @Resolver("Budget")
 @UseGuards(GqlAuthGuard)
 export class BudgetsResolver {
   constructor(private readonly budgetsService: BudgetsService) {}
 
+  @Query(() => FindBudgetsResponse)
+  async getUserBudgets(
+    @CurrentUser() user: User,
+    @Args("findBudgetsInput") findBudgetsInput: FindBudgetsInput
+  ) {
+    return this.budgetsService.handleGetBudgets(user.id, findBudgetsInput);
+  }
+
+  @Query(() => Budget)
+  async getUserBudget(
+    @CurrentUser() user: User,
+    @Args("id", { type: () => String }) id: string
+  ) {
+    return this.budgetsService.handleGetBudget(id, user.id);
+  }
+
   @Mutation(() => Budget)
   async createBudget(
     @CurrentUser() user: User,
     @Args("createBudgeInput") createBudgetInput: CreateBudgetInput
   ) {
-    const budgetExists = await this.budgetsService.findByName(
-      createBudgetInput.name,
-      user.id
-    );
-
-    if (budgetExists) {
-      throw new BadRequestException("Budget with name already exists");
-    }
-
-    const budget = await this.budgetsService.createBudget({
-      ...createBudgetInput,
-      userId: user.id,
-    });
-
-    if (!budget) {
-      throw new InternalServerErrorException("Failed to create budget");
-    }
-
-    return budget;
+    return this.budgetsService.handleCreateBudget(user.id, createBudgetInput);
   }
 
   @Mutation(() => Boolean)
@@ -49,18 +44,7 @@ export class BudgetsResolver {
     @CurrentUser() user: User,
     @Args("id", { type: () => String }) id: string
   ) {
-    const budget = await this.budgetsService.findById(id, user.id);
-    if (!budget) {
-      throw new NotFoundException("Budget not found");
-    }
-
-    const deletedBudget = await this.budgetsService.deleteBudget(id);
-
-    if (!deletedBudget) {
-      throw new InternalServerErrorException("Failed to delete budget");
-    }
-
-    return !!deletedBudget;
+    return this.budgetsService.handleDeleteBudget(id, user.id);
   }
 
   @Mutation(() => Budget)
@@ -68,23 +52,10 @@ export class BudgetsResolver {
     @CurrentUser() user: User,
     @Args("updateBudgetInput") updateBudgetInput: UpdateBudgetInput
   ) {
-    const budget = await this.budgetsService.findById(
+    return this.budgetsService.handleUpdateBudget(
       updateBudgetInput.budgetId,
-      user.id
-    );
-    if (!budget) {
-      throw new NotFoundException("Budget not found");
-    }
-
-    const updatedBudget = await this.budgetsService.updateBudget(
-      updateBudgetInput.budgetId,
+      user.id,
       updateBudgetInput
     );
-
-    if (!updatedBudget) {
-      throw new InternalServerErrorException("Failed to update budget");
-    }
-
-    return updatedBudget;
   }
 }
