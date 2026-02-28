@@ -6,6 +6,7 @@ import { GraphQLModule } from "@nestjs/graphql";
 import { AccountsModule } from "./accounts/accounts.module";
 import { AuthModule } from "./auth/auth.module";
 import { BudgetsModule } from "./budgets/budgets.module";
+import { CashFlowModule } from "./cash-flow/cash-flow.module";
 import config from "./common/configs/config";
 import { PrismaModule } from "./common/services/prisma/prisma.module";
 import { ExpensesModule } from "./expenses/expenses.module";
@@ -32,6 +33,7 @@ import { UsersModule } from "./users/users.module";
     UsersModule,
     TransactionsModule,
     BudgetsModule,
+    CashFlowModule,
     AccountsModule,
     IncomeModule,
     ExpensesModule,
