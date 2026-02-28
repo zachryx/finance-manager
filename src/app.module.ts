@@ -7,6 +7,7 @@ import { AccountsModule } from "./accounts/accounts.module";
 import { AuthModule } from "./auth/auth.module";
 import { BudgetsModule } from "./budgets/budgets.module";
 import { CashFlowModule } from "./cash-flow/cash-flow.module";
+import { ReportsModule } from "./reports/reports.module";
 import config from "./common/configs/config";
 import { PrismaModule } from "./common/services/prisma/prisma.module";
 import { ExpensesModule } from "./expenses/expenses.module";
@@ -34,6 +35,7 @@ import { UsersModule } from "./users/users.module";
     TransactionsModule,
     BudgetsModule,
     CashFlowModule,
+    ReportsModule,
     AccountsModule,
     IncomeModule,
     ExpensesModule,
