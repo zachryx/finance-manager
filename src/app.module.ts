@@ -4,6 +4,7 @@ import { Logger, Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { GraphQLModule } from "@nestjs/graphql";
 import { AccountsModule } from "./accounts/accounts.module";
+import { ApprovalsModule } from "./approvals/approvals.module";
 import { AuthModule } from "./auth/auth.module";
 import { BudgetsModule } from "./budgets/budgets.module";
 import { CashFlowModule } from "./cash-flow/cash-flow.module";
@@ -34,6 +35,7 @@ import { UsersModule } from "./users/users.module";
     UsersModule,
     TransactionsModule,
     BudgetsModule,
+    ApprovalsModule,
     CashFlowModule,
     ReportsModule,
     AccountsModule,
