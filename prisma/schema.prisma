@@ -133,6 +133,35 @@ model ApprovalRequest {
   @@index([status])
 }
 
+model AuditLog {
+  id           String        @id @default(uuid())
+  entityType   String
+  entityId     String
+  action       AuditAction
+  userId       String
+  previousValue Json?
+  newValue     Json?
+  reason       String?
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime      @default(now())
+
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  EXPORT
+  APPROVE
+  REJECT
+}
+
 enum ApprovalType {
   EXPENSE
   BUDGET
