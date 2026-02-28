@@ -11,7 +11,7 @@ import {
   ApprovalFilterInput,
 } from "./inputs/approval.input";
 import { ApprovalsResponse } from "./responses/approvals.response";
-import { ApprovalStatus, ApprovalType } from "../generated/prisma/index";
+import { ApprovalStatus, ApprovalType } from "@prisma/client";
 
 const EXPENSE_APPROVAL_THRESHOLD = 1000;
 const BUDGET_APPROVAL_THRESHOLD = 5000;

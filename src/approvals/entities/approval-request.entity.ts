@@ -2,7 +2,7 @@ import { ObjectType, Field, Float, registerEnumType } from "@nestjs/graphql";
 import {
   ApprovalType as PrismaApprovalType,
   ApprovalStatus as PrismaApprovalStatus,
-} from "../../generated/prisma/index";
+} from "@prisma/client";
 
 export enum ApprovalType {
   EXPENSE = "EXPENSE",

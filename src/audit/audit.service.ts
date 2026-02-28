@@ -3,7 +3,7 @@ import { PrismaService } from "../common/services/prisma/prisma.service";
 import { AuditLog } from "./entities/audit-log.entity";
 import { AuditLogFilterInput } from "./inputs/audit-log.input";
 import { AuditLogsResponse } from "./responses/audit-logs.response";
-import { AuditAction } from "../generated/prisma/index";
+import { AuditAction } from "@prisma/client";
 
 @Injectable()
 export class AuditService {
