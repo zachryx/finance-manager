@@ -12,6 +12,126 @@ type Account {
   userId: String!
 }
 
+type AccountCashPosition {
+  accountId: String!
+  accountName: String!
+  balance: Float!
+  currency: String!
+  percentage: Float!
+}
+
+type AccountSummary {
+  accountId: String!
+  accountName: String!
+  balance: Float!
+  change: Float!
+}
+
+"""Severity level of the alert"""
+enum AlertSeverity {
+  CRITICAL
+  INFO
+  WARNING
+}
+
+"""Type of budget alert"""
+enum AlertType {
+  APPROACHING_LIMIT
+  OVER_BUDGET
+  PERIOD_ENDING
+  SIGNIFICANT_VARIANCE
+}
+
+input ApprovalFilterInput {
+  limit: Int! = 10
+  page: Int! = 1
+  status: String
+  type: String
+}
+
+type ApprovalRequest {
+  amount: Float!
+  approverId: String
+  comments: String
+  createdAt: DateTime!
+  description: String
+  id: String!
+  referenceId: String!
+  requestedBy: String!
+  resolvedAt: DateTime
+  status: ApprovalStatus!
+  type: ApprovalType!
+  updatedAt: DateTime!
+}
+
+"""Status of approval request"""
+enum ApprovalStatus {
+  APPROVED
+  PENDING
+  REJECTED
+}
+
+"""Type of approval request"""
+enum ApprovalType {
+  BUDGET
+  EXPENSE
+  INCOME
+}
+
+type ApprovalsResponse {
+  data: [ApprovalRequest!]!
+  limit: Int!
+  page: Int!
+  totalCount: Int!
+}
+
+input ApproveInput {
+  approvalId: String!
+  comments: String
+}
+
+"""Type of audit action"""
+enum AuditAction {
+  APPROVE
+  CREATE
+  DELETE
+  EXPORT
+  LOGIN
+  LOGOUT
+  REJECT
+  UPDATE
+}
+
+type AuditLog {
+  action: AuditAction!
+  createdAt: DateTime!
+  entityId: String!
+  entityType: String!
+  id: String!
+  ipAddress: String
+  newValue: String
+  previousValue: String
+  reason: String
+  userAgent: String
+  userId: String!
+}
+
+input AuditLogFilterInput {
+  action: String
+  entityId: String
+  entityType: String
+  limit: Int! = 10
+  page: Int! = 1
+  userId: String
+}
+
+type AuditLogsResponse {
+  data: [AuditLog!]!
+  limit: Int!
+  page: Int!
+  totalCount: Int!
+}
+
 type Budget {
   amount: Int!
   endTime: DateTime!
@@ -19,6 +139,161 @@ type Budget {
   name: String!
   startTime: DateTime!
   type: Range!
+}
+
+type BudgetAlert {
+  budgetId: String!
+  budgetName: String!
+  createdAt: DateTime!
+  message: String!
+  severity: AlertSeverity!
+  type: AlertType!
+}
+
+type BudgetDashboard {
+  alerts: [BudgetAlert!]!
+  budgets: [BudgetVsActual!]!
+  lastUpdated: DateTime!
+  summary: BudgetSummary!
+}
+
+input BudgetDashboardInput {
+  limit: Int! = 10
+  page: Int! = 1
+  status: String
+}
+
+"""Budget status based on utilization"""
+enum BudgetStatus {
+  AT_RISK
+  NOT_STARTED
+  ON_TRACK
+  OVER_BUDGET
+}
+
+type BudgetSummary {
+  atRisk: Int!
+  averageUtilization: Float!
+  onTrack: Int!
+  overBudget: Int!
+  totalActual: Float!
+  totalBudgeted: Float!
+  totalBudgets: Int!
+  totalVariance: Float!
+}
+
+type BudgetVariance {
+  actualSpending: Float!
+  budgetId: String!
+  budgetedAmount: Float!
+  isSignificant: Boolean!
+  threshold: Float!
+  trend: VarianceTrend
+  variance: Float!
+  variancePercent: Float!
+  varianceType: VarianceType!
+}
+
+type BudgetVsActual {
+  actualSpending: Float!
+  budget: Budget!
+  budgetedAmount: Float!
+  daysRemaining: Int
+  expenseCount: Int!
+  expenses: [Expense!]!
+  period: DateRange!
+  projectedSpending: Float
+  remaining: Float!
+  status: BudgetStatus!
+  utilizationPercent: Float!
+  variance: Float!
+  variancePercent: Float!
+}
+
+type CashFlowAlert {
+  date: DateTime!
+  message: String!
+  projectedDate: DateTime
+  recommendation: String
+  severity: CashFlowAlertSeverity!
+  type: CashFlowAlertType!
+}
+
+"""Severity of the alert"""
+enum CashFlowAlertSeverity {
+  CRITICAL
+  INFO
+  WARNING
+}
+
+"""Type of cash flow alert"""
+enum CashFlowAlertType {
+  LARGE_TRANSACTION
+  LOW_CASH
+  NEGATIVE_PROJECTION
+  THRESHOLD_BREACH
+  UNUSUAL_PATTERN
+}
+
+type CashFlowPoint {
+  confidence: Float!
+  date: DateTime!
+  factors: [ProjectionFactor!]!
+  projectedBalance: Float!
+  projectedExpenses: Float!
+  projectedIncome: Float!
+}
+
+type CashFlowProjection {
+  alerts: [CashFlowAlert!]!
+  currentBalance: Int!
+  projections: [CashFlowPoint!]!
+  summary: CashFlowSummary!
+}
+
+input CashFlowProjectionInput {
+  days: Int! = 90
+  includeBudgets: Boolean! = true
+  includeRecurring: Boolean! = true
+  scenario: ScenarioType! = REALISTIC
+}
+
+type CashFlowSummary {
+  daysUntilNegative: Int
+  endingBalance: Float!
+  netCashFlow: Float!
+  riskLevel: String!
+  totalProjectedExpenses: Float!
+  totalProjectedIncome: Float!
+}
+
+type CashPosition {
+  accounts: [AccountCashPosition!]!
+  byCurrency: [CurrencyCashPosition!]!
+  lastUpdated: DateTime!
+  totalCash: Float!
+}
+
+type CategoryBreakdown {
+  categories: [CategoryData!]!
+  endDate: DateTime!
+  period: String!
+  startDate: DateTime!
+  totalExpenses: Float!
+  trends: [CategoryTrend!]!
+}
+
+type CategoryData {
+  amount: Float!
+  average: Float!
+  category: String!
+  count: Float!
+  percentage: Float!
+}
+
+type CategoryTrend {
+  amount: Float!
+  period: String!
 }
 
 input CreateAccountInput {
@@ -50,10 +325,32 @@ input CreateIncomeInput {
   source: String!
 }
 
+type CurrencyCashPosition {
+  accounts: [AccountCashPosition!]!
+  currency: String!
+  total: Float!
+}
+
+input DashboardInput {
+  days: Int! = 30
+}
+
+type DateRange {
+  end: DateTime!
+  start: DateTime!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type ExecutiveDashboard {
+  accounts: [AccountSummary!]!
+  kpis: [KpiMetric!]!
+  lastUpdated: DateTime!
+  summary: FinancialSummary!
+}
 
 type Expense {
   amount: Float!
@@ -73,6 +370,30 @@ enum ExpenseCategory {
   Rent
   Subscription
   Transportation
+}
+
+type ExpenseEntry {
+  amount: Float!
+  category: String!
+  percentage: Float!
+}
+
+"""Type of projection factor"""
+enum FactorType {
+  BUDGETED_EXPENSE
+  ESTIMATE
+  HISTORICAL_PATTERN
+  KNOWN_EXPENSE
+  KNOWN_INCOME
+}
+
+type FinancialSummary {
+  budgetUtilization: Float!
+  netSavings: Float!
+  savingsRate: Float!
+  totalBudget: Float!
+  totalExpenses: Float!
+  totalIncome: Float!
 }
 
 input FindBudgetsInput {
@@ -116,6 +437,29 @@ type FindIncomesResponse {
   totalCount: Int!
 }
 
+type ForecastTrend {
+  changePercent: Float!
+  currentValue: Float!
+  metric: String!
+  projectedValue: Float!
+  trend: String!
+}
+
+input ForecastingInput {
+  days: Int! = 90
+  includeAllScenarios: Boolean! = true
+  includeTrends: Boolean! = true
+}
+
+type ForecastingResult {
+  endDate: DateTime!
+  generatedAt: DateTime!
+  period: String!
+  scenarios: [ScenarioProjection!]!
+  startDate: DateTime!
+  trends: [ForecastTrend!]!
+}
+
 input ForgotPassword {
   email: String!
 }
@@ -130,10 +474,34 @@ type Income {
   userId: String!
 }
 
+type IncomeEntry {
+  amount: Float!
+  percentage: Float!
+  source: String!
+}
+
+type IncomeStatement {
+  endDate: DateTime!
+  expenseBreakdown: [ExpenseEntry!]!
+  incomeBreakdown: [IncomeEntry!]!
+  netIncome: Float!
+  period: String!
+  startDate: DateTime!
+  totalExpenses: Float!
+  totalIncome: Float!
+}
+
+type KpiMetric {
+  changePercent: Float!
+  name: String!
+  trend: String!
+  value: Float!
+}
+
 input LoginInput {
   email: String!
   password: String!
-  remember_me: Boolean!
+  remember_me: Boolean! = false
 }
 
 type LoginResponse {
@@ -146,16 +514,36 @@ type MessageResponse {
 }
 
 type Mutation {
+  approveRequest(input: ApproveInput!): ApprovalRequest!
   createAccount(createAccountInput: CreateAccountInput!): Account!
   createBudget(createBudgeInput: CreateBudgetInput!): Budget!
   createExpense(createExpenseInput: CreateExpenseInput!): Expense!
   createIncome(createIncomeInput: CreateIncomeInput!): Income!
   deleteAccount(id: String!): Boolean!
   deleteBudget(id: String!): Boolean!
+  forgotPassword(forgotPassword: ForgotPassword!): MessageResponse!
   login(loginInput: LoginInput!): LoginResponse!
   register(registerInput: RegisterInput!): User!
+  rejectRequest(input: ApproveInput!): ApprovalRequest!
+  resetPassword(resetPasswordInput: ResetPasswordInput!): MessageResponse!
+  submitForApproval(input: SubmitApprovalInput!): ApprovalRequest!
   updateAccount(updateAccountInput: UpdateAccountInput!): Account!
   updateBudget(updateBudgetInput: UpdateBudgetInput!): Budget!
+  whatIfAnalysis(input: WhatIfInput!): ScenarioProjection!
+}
+
+type PeriodVariance {
+  actual: Float!
+  budgeted: Float!
+  period: String!
+  variance: Float!
+}
+
+type ProjectionFactor {
+  amount: Float!
+  confidence: Float!
+  description: String!
+  type: FactorType!
 }
 
 type Query {
@@ -165,10 +553,24 @@ type Query {
   findUserAccount(id: String!): Account!
   findUserAccounts: [Account!]!
   findUserExpenses(findExpensesInput: FindExpensesInput!): FindExpensesResponse!
-  forgotPassword(forgotPassword: ForgotPassword!): MessageResponse!
+  generateForecast(input: ForecastingInput!): ForecastingResult!
+  getApproval(id: String!): ApprovalRequest!
+  getApprovalHistory(input: ApprovalFilterInput!): ApprovalsResponse!
+  getAuditLogs(input: AuditLogFilterInput!): AuditLogsResponse!
+  getBudgetDashboard(budgetDashboardInput: BudgetDashboardInput!): BudgetDashboard!
+  getBudgetVariance(budgetId: String!): BudgetVariance!
+  getBudgetVsActual(budgetId: String!): BudgetVsActual!
+  getCashFlowAlerts: [CashFlowAlert!]!
+  getCategoryBreakdown(input: ReportInput!): CategoryBreakdown!
+  getCurrentCashPosition: CashPosition!
+  getEntityHistory(entityId: String!, entityType: String!): [AuditLog!]!
+  getExecutiveDashboard(input: DashboardInput!): ExecutiveDashboard!
+  getIncomeStatement(input: ReportInput!): IncomeStatement!
+  getPendingApprovals(input: ApprovalFilterInput!): ApprovalsResponse!
+  getProjectedCashFlow(input: CashFlowProjectionInput!): CashFlowProjection!
   getUserBudget(id: String!): Budget!
   getUserBudgets(findBudgetsInput: FindBudgetsInput!): FindBudgetsResponse!
-  resetPassword(resetPasswordInput: ResetPasswordInput!): MessageResponse!
+  verifyToken(token: String!): Boolean!
 }
 
 """Budget range type"""
@@ -187,14 +589,49 @@ input RegisterInput {
   password: String!
 }
 
+input ReportInput {
+  endDate: DateTime!
+  startDate: DateTime!
+}
+
 input ResetPasswordInput {
   password: String!
   token: String!
 }
 
+type ScenarioProjection {
+  assumptions: [String!]!
+  confidenceLevel: Float!
+  projectedExpenses: Float!
+  projectedIncome: Float!
+  projectedSavings: Float!
+  scenario: String!
+}
+
+"""Cash flow projection scenario type"""
+enum ScenarioType {
+  OPTIMISTIC
+  PESSIMISTIC
+  REALISTIC
+}
+
+input SubmitApprovalInput {
+  amount: Int!
+  description: String
+  referenceId: String!
+  type: String!
+}
+
 type TokensType {
   access_token: String!
-  refresh_token: String!
+  refresh_token: String
+}
+
+"""Direction of variance trend"""
+enum TrendDirection {
+  IMPROVING
+  STABLE
+  WORSENING
 }
 
 input UpdateAccountInput {
@@ -218,4 +655,24 @@ type User {
   id: String!
   lastname: String!
   updated_at: DateTime!
+}
+
+type VarianceTrend {
+  direction: TrendDirection!
+  magnitude: Float!
+  periods: [PeriodVariance!]!
+}
+
+"""Type of variance"""
+enum VarianceType {
+  FAVORABLE
+  ON_TARGET
+  UNFAVORABLE
+}
+
+input WhatIfInput {
+  description: String
+  expenseChange: Int!
+  incomeChange: Int!
+  scenarioName: String!
 }
