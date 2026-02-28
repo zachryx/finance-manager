@@ -9,6 +9,7 @@ import { AuditModule } from "./audit/audit.module";
 import { AuthModule } from "./auth/auth.module";
 import { BudgetsModule } from "./budgets/budgets.module";
 import { CashFlowModule } from "./cash-flow/cash-flow.module";
+import { ForecastingModule } from "./forecasting/forecasting.module";
 import { ReportsModule } from "./reports/reports.module";
 import config from "./common/configs/config";
 import { PrismaModule } from "./common/services/prisma/prisma.module";
@@ -38,6 +39,7 @@ import { UsersModule } from "./users/users.module";
     BudgetsModule,
     ApprovalsModule,
     AuditModule,
+    ForecastingModule,
     CashFlowModule,
     ReportsModule,
     AccountsModule,
