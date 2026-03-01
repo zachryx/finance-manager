@@ -10,6 +10,8 @@ export const userMock = (): User => ({
   account_verify_expires: null,
   account_verify_token: null,
   email_verified_at: null,
+  password_reset_token: null,
+  password_reset_expires: null,
   created_at: faker.date.recent(),
   updated_at: faker.date.recent(),
 });
